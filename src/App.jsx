@@ -7,16 +7,27 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Cart from "./components/Cart";
 import ProductDetail from "./components/ProductDetail";
+import SearchResults from "./components/SearchResults";
+import Account from "./components/Account";
 
 export default function App() {
   const [cartItems, setCartItems] = useState([]);
-  const [route, setRoute] = useState("home"); // home | login | register | cart | product
+  const [route, setRoute] = useState("home"); // home | login | register | cart | product | search | account
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const selectedProduct = useMemo(
     () => PRODUCTS.find((p) => p.id === selectedProductId) || null,
     [selectedProductId]
   );
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return PRODUCTS.filter(
+      (p) => p.name.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   const handleAddToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
@@ -28,9 +39,14 @@ export default function App() {
 
   const navigate = (to) => setRoute(to);
 
+  const handleSearch = (q) => {
+    setSearchQuery(q);
+    setRoute("search");
+  };
+
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col">
-      <Navbar cartCount={cartItems.length} onNavigate={navigate} />
+      <Navbar cartCount={cartItems.length} onNavigate={navigate} onSearch={handleSearch} searchData={PRODUCTS} />
       <main className="flex-1">
         {route === "home" && (
           <>
@@ -62,6 +78,20 @@ export default function App() {
             }}
             onBack={() => setRoute("home")}
           />
+        )}
+        {route === "search" && (
+          <SearchResults
+            query={searchQuery}
+            results={searchResults}
+            onView={(p) => {
+              setSelectedProductId(p.id);
+              setRoute("product");
+            }}
+            onAdd={handleAddToCart}
+          />
+        )}
+        {route === "account" && (
+          <Account onNavigate={navigate} />
         )}
       </main>
       <Footer />
