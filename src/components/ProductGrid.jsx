@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 
-const PRODUCTS = [
+export const PRODUCTS = [
   {
     id: "p1",
     name: "Everyday Tee",
@@ -53,10 +53,10 @@ const PRODUCTS = [
   },
 ];
 
-function ProductCard({ product, onAdd }) {
+function ProductCard({ product, onAdd, onView }) {
   return (
     <div className="group rounded-xl border bg-white overflow-hidden flex flex-col">
-      <div className="relative aspect-square overflow-hidden">
+      <button onClick={() => onView(product)} className="relative aspect-square overflow-hidden text-left">
         <img
           src={product.image}
           alt={product.name}
@@ -68,10 +68,10 @@ function ProductCard({ product, onAdd }) {
             {product.tag}
           </span>
         )}
-      </div>
+      </button>
       <div className="p-4 flex-1 flex flex-col">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-medium leading-tight line-clamp-2">{product.name}</h3>
+          <button onClick={() => onView(product)} className="font-medium leading-tight line-clamp-2 text-left hover:underline">{product.name}</button>
           <div className="text-right font-semibold">${product.price}</div>
         </div>
         <div className="mt-2 flex items-center gap-1 text-amber-500">
@@ -91,7 +91,7 @@ function ProductCard({ product, onAdd }) {
   );
 }
 
-export default function ProductGrid({ onAddToCart }) {
+export default function ProductGrid({ onAddToCart, onViewProduct }) {
   return (
     <section id="featured" className="py-10 sm:py-14 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,7 +104,7 @@ export default function ProductGrid({ onAddToCart }) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {PRODUCTS.map((p) => (
-            <ProductCard key={p.id} product={p} onAdd={onAddToCart} />
+            <ProductCard key={p.id} product={p} onAdd={onAddToCart} onView={onViewProduct} />
           ))}
         </div>
       </div>
